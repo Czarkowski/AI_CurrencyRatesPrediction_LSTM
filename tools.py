@@ -1,4 +1,6 @@
+import json
 import math
+import os
 from datetime import datetime, timedelta
 
 import numpy as np
@@ -38,7 +40,6 @@ def getDataPandas(name: str = 'EURUSD_D1'):
             df.loc[i + 1, "High"] = max(row['High'], df.loc[i + 1, "High"])
             df.loc[i + 1, "Low"] = min(row['Low'], df.loc[i + 1, "Low"])
             df.loc[i + 1, "Volume"] = sum([row['Volume'], df.loc[i + 1, "Volume"]])
-
     df = df[df.WeekDay != 6]
     df.reset_index(inplace=True, drop=True)
 
@@ -75,41 +76,31 @@ def getTimeSeriesDataBool(tab: np.ndarray, targetIndes: int, stepBack: int = 1, 
     return np.array(listNew), np.array(listValue)
 
 
-def getTimeSeriesData(tab: np.ndarray, targetIndes: int, stepBack: int = 1, stepForward: int = 1,
-                      stepNext: int = 1) -> tuple[list[list[None]], list[None]]:
-    listNew = []
-    listValue = []
-    start = stepBack - 1
-    for j in range(start, tab.shape[0] - stepForward, stepNext):
-        if math.isnan(tab[j + stepForward][targetIndes]):
-            print(f'index {j} has target value {tab[j + stepForward][targetIndes]}')
-            continue
-        if math.isnan(tab[j][targetIndes]):
-            print(f'index {j} has target value {tab[j + stepForward][targetIndes]}')
-            continue
-        listTemp = []
-        for k in range(0, stepBack):
-            listTemp.append(tab[j + (k - start)])
-        listNew.append(listTemp)
-        listValue.append(tab[j + stepForward][targetIndes])
-    return (listNew, listValue)
-
 
 def splitData(ts, size):
     xTrain, xTest, yTrain, yTest = train_test_split(ts[0], ts[1], test_size=size, shuffle=True)
     return (xTrain, yTrain), (xTest, yTest)
 
 def normalize(df):
+    dic = dict()
     meanPrice = (df.loc[:, ['Open', 'High', 'Low', 'Close']].mean()).mean()
     df[['Open', 'High', 'Low', 'Close']] -= meanPrice
+    dic['meanPrice'] = meanPrice
+    dic['stdPrice'] = None
+
 
     meanVolume = (df['Volume'].mean())
     df.Volume -= meanVolume
     stdVolume = (df.Volume.std())
     df.Volume /= stdVolume
-    return df
+    dic['meanVolume'] = meanVolume
+    dic['stdVolume'] = stdVolume
+    return dic
 
 def saveModel(model):
+    dir = f'{modelsDir}'
+    if not os.path.exists(dir):
+        os.makedirs(dir)
     name = runDataTime.strftime("%Y-%m-%d_%H_%M")
     print(f'Save model: {name}')
     model.save(f'{modelsDir}/{name}/model.h5')
@@ -119,7 +110,7 @@ def saveModel(model):
     f.close()
 
 
-def loadModel():
+def loadModel(c):
     print("loadModel")
     f = open(f"{modelsDir}/last.txt", "r")
     name = f.readline()
@@ -130,7 +121,7 @@ def loadModel():
     print(f"{options[0]} - loadWeights\n"
           f"{options[1]} - trainModel\n"
           f"{options[2]} - guit\n")
-    x = getInput(options)
+    x = getInput(options,c)
     if x == options[0]:
         model.load_weights(f'{modelsDir}/{name}/weights.h5')
     elif x == options[2]:
@@ -138,9 +129,18 @@ def loadModel():
     return model
 
 
-def saveData(df):
+def saveData(df,dic):
     name = runDataTime.strftime("%Y-%m-%d_%H_%M")
-    df.to_csv(f'{datasDir}/{name}' + '.csv', float_format='%.4f')
+    dir = f'PrepareData/{name}'
+    if not os.path.exists(dir):
+        os.makedirs(dir)
+
+    df.to_csv(f'{datasDir}/{name}/data.csv', float_format='%.4f')
+
+    # Zapisywanie danych normalizacji do pliku JSON
+    with open(f'{datasDir}/{name}/normalize.json', 'x') as plik:
+        json.dump(dic, plik)
+
     f = open(f"{datasDir}/last.txt", "w")
     f.write(name)
     f.close()
@@ -150,7 +150,7 @@ def loadData():
     f = open(f"{datasDir}/last.txt", "r")
     name = f.readline()
     f.close()
-    df = pd.read_csv(f'{datasDir}/{name}.csv', index_col='Time', parse_dates=['Time'])
+    df = pd.read_csv(f'{datasDir}/{name}/data.csv', index_col='Time', parse_dates=['Time'])
     print(df.head())
     return df
 

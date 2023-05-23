@@ -44,7 +44,7 @@
 >    df = df[df.WeekDay != 6]
 > ```
 >  2. W całym zbiorze znalazły się również dwa piątki w które giełda nie była otwartą (2015-12-31 i 2020-12-31 ). żeby zachować spójność
-> i jednocześnie nie pozostawić tych dni z wartościami pustymi, uzupełniłem brakujące dane bardzo naiwnie kopiując wartości z dnia poprzedzającego.
+> i jednocześnie nie pozostawić tych dni z wartościami pustymi, uzupełniłem brakujące dane naiwnie kopiując wartości z dnia poprzedzającego.
 > ```
 >     for i, row in df.iterrows():
 >        if row.WeekDay == 3:
@@ -59,7 +59,7 @@
 > Aplikacja jest podzielona na funkcję odpowiadające kolejnym krokom, jak pobranie danych, przygotowanie, utworzenie modelu,
 > wyświetlenie wyników itd. Wybierając odpowiednie opcje możemy zapisywać utworzone zbiory danych jak i model sieci wraz z wagami,
 > wybierając odpowiednie opcje posługując się terminalem, albo podstawiając przygotowany zastaw predefiniowanych opcji,
-> możemy: korzystać z poprzednio utworzonego zbioru danych, albo zładować zapisaną sieć neuronową z wagami i przetestować 
+> możemy: korzystać z poprzednio utworzonego zbioru danych, albo załadować zapisaną sieć neuronową z wagami i przetestować 
 > ją na nowych danych, bez powtórnego uczenia. Aplikacja nie posiada GUI, a jej możliwości sprowadzają się do manipulacji 
 > kodem wybranych funkcji i wykresów biblioteki pyplot
 
@@ -96,7 +96,7 @@
 > ogólnie wszystkich przypadków jest ponad 4 tysiące (dokładna liczba zależy od obranych przedziałow czasowych)
 > 
 > Na dokładną wartość celności predykcji ma wpływ wiele czynników jak np. wagi początkowe, daltego sieć była sprawdzana i 
-> uczona kilku krotnie uzyskując wynik w okolicy 60% wzwyż:
+> uczona kilkukrotnie uzyskując wynik w okolicy 60% wzwyż:
 > 
 > ![Obrazek1](images/1.PNG)
 > ![Obrazek2](images/2.PNG)
@@ -107,7 +107,7 @@
 > 3. Fałszywie pozytywny
 > 4. Fałszywie negatywny
 > 
-> Z perspektywy gracza giełdowego interesują nas przypadki pozytywne (bo w tedy chcemy inwestować), więc chcemy aby stosunek pozytywnie
+> Z perspektywy gracza giełdowego interesują nas przypadki pozytywne (bo wtedy chcemy inwestować), więc chcemy aby stosunek pozytywnie
 > fałszywych i prawdziwych był jak najkorzystniejszy, można starać się poprawić ten wynik już po wytrenowaniu sieci,
 > stosując threshold, który rozgranicza klasyfikację miedzy wzrost, a spadek cen waluty, nieznacznie zwiększając jego wartość
 > możemy znacznie zmniejszyć liczbę przypadków Fałszywie pozytywnych, a w niewielkim stopniu zmniejszyć liczbę Prawdziwie pozytywnych,

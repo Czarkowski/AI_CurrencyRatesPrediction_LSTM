@@ -97,8 +97,9 @@
 > 
 > Na dokładną wartość celności predykcji ma wpływ wiele czynników jak np. wagi początkowe, daltego sieć była sprawdzana i 
 > uczona kilku krotnie uzyskując wynik w okolicy 60% wzwyż:
-> ![Obrazek1](images/1.png)
-> ![Obrazek2](images/2.png)
+> 
+> ![Obrazek1](images/1.PNG)
+> ![Obrazek2](images/2.PNG)
 > 
 > Na koniec należy rozważyć różne przypadki możliwej klasyfikacji:
 > 1. Prawdziwie pozytywny
@@ -112,5 +113,6 @@
 > możemy znacznie zmniejszyć liczbę przypadków Fałszywie pozytywnych, a w niewielkim stopniu zmniejszyć liczbę Prawdziwie pozytywnych,
 > co zmienia stosunek tych dwóch wartości na naszą korzyść, nie da się dokładnie zdefiniować wartości threshold, należy 
 > w sposób iteracyjny znaleźć wartość najbardziej nas satysfakcjonującą:
-> ![Obrazek2](images/3.png)
+> 
+> ![Obrazek2](images/3.PNG)
 > 
